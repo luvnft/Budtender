@@ -118,7 +118,7 @@ user_proxy = autogen.UserProxyAgent(
 )
 
 
-groupchat = ExecutorGroupchat(agents=[user_proxy, comms_assistant, menu_assistant, order_assistant], messages=[], max_round=20, dedicated_executor = user_proxy)
+groupchat = ExecutorGroupchat(agents=[user_proxy, comms_assistant, menu_assistant, order_assistant], messages=[], max_round=10, dedicated_executor = user_proxy)
 manager = GroupChatManager(groupchat=groupchat)
 
 
