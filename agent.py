@@ -108,7 +108,7 @@ menu_assistant = AssistantAgent(
 
 order_assistant = AssistantAgent(
     name="Place_order",
-    system_message="Your job is to place the order of the product. When a user wants to place a order send them to this link https://greenhavendispo.framer.website/place_order ",
+    system_message="Your job is to send a link when a user mentinos anything about placing a order. Thelink is https://greenhavendispo.framer.website/place_order ",
     llm_config=llm_config,
     )
 
@@ -118,7 +118,7 @@ user_proxy = autogen.UserProxyAgent(
    code_execution_config={"work_dir": "web"},
    human_input_mode="TERMINATE",
    is_termination_msg=lambda x: x.get("content", "") and x.get("content", "").rstrip().endswith("TERMINATE"),
-   system_message="Reply TERMINATE if the task has been answered corerctly. Otherwise, reply with the reason why the task is not solved yet",
+   system_message="Reply TERMINATE if the task has been answered succesfully. Otherwise, reply with the reason why the answer was not accurate",
    llm_config=llm_config,
     function_map={
         "Menu": run_agent_query,
