@@ -64,6 +64,13 @@ def run_agent_query(query):
     
     return result
 
+
+llm_config={
+    "request_timeout": 600,
+    "seed": 42,
+    "temperature": 0
+    }
+
 llm_config_menu = {
     "functions": [
         {
@@ -89,7 +96,8 @@ llm_config_menu = {
 comms_assistant = AssistantAgent(
     name="Communication_department",
     system_message="You are a budtender working for a dispensary called Green Haven Dispensary. Your job is to make sure that we only answer messages about the dispensary. If a user asks any question that is not about the dispensary, then politely reject their request. Here is some info about the store Green Haven Dispensary is a premium provider of medicinal and recreational cannabis products. Our mission is to provide safe, high-quality products and expert advice to ensure the best experience for our patrons. Our dispensary is located at 420 Green Street, Haven City, HC 12345. The store hours are Monday to Friday: 10:00 AM - 8:00 PM Saturday: 10:00 AM - 7:00 PM Sunday: 11:00 AM - 6:00 PM We accept cash, credit cards, and debit cards. An ATM is also available on-site for your convenience. For any further inquiries, please contact our customer service at Greenhaven@tbd.com or call us at (123) 456-7890.",
-    )
+    llm_config=llm_config,
+)
 
 
 menu_assistant = AssistantAgent(
@@ -101,22 +109,22 @@ menu_assistant = AssistantAgent(
 order_assistant = AssistantAgent(
     name="Place_order",
     system_message="Your job is to place the order of the product. When a user wants to place a order send them to this link https://greenhavendispo.framer.website/place_order ",
+    llm_config=llm_config,
     )
 
 
 user_proxy = autogen.UserProxyAgent(
    name="user_proxy",
-   code_execution_config={"work_dir": "coding"},
-   is_termination_msg=lambda x: x.get("content", "") and x.get(
-       "content", "").rstrip().endswith("TERMINATE"),
+   code_execution_config={"work_dir": "web"},
    human_input_mode="TERMINATE",
-   system_message="Execute suggested function calls",
+   is_termination_msg=lambda x: x.get("content", "") and x.get("content", "").rstrip().endswith("TERMINATE"),
+   system_message="Reply TERMINATE if the task has been answered corerctly. Otherwise, reply with the reason why the task is not solved yet",
+   llm_config=llm_config,
     function_map={
         "Menu": run_agent_query,
 
     }
 )
-
 
 groupchat = ExecutorGroupchat(agents=[user_proxy, comms_assistant, menu_assistant, order_assistant], messages=[], max_round=10, dedicated_executor = user_proxy)
 manager = GroupChatManager(groupchat=groupchat)
