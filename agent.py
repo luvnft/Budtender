@@ -106,6 +106,13 @@ menu_assistant = AssistantAgent(
     llm_config=llm_config_menu,
     )
 
+expert_assistant = AssistantAgent(
+    name="Weed_Expert",
+    system_message="You are tasked with coming up with a reccomindation for the type of weed someone should get based on the user's input and then checking with the Menu_Expert to see if we have it on the menu. Recommend one of these outcomes Creativity, Energetic, Energy, Euphoric, Focus, Happiness, Happy, Pain Relief, Relaxed, Relaxation, Sleep Aid, Stress Relief, or Uplifted  ",
+    llm_config=llm_config,
+    )
+
+
 order_assistant = AssistantAgent(
     name="Place_order",
     system_message="Your job is to send a link when a user mentinos anything about placing a order. Thelink is https://greenhavendispo.framer.website/place_order ",
@@ -126,7 +133,7 @@ user_proxy = autogen.UserProxyAgent(
     }
 )
 
-groupchat = ExecutorGroupchat(agents=[user_proxy, comms_assistant, menu_assistant, order_assistant], messages=[], max_round=10, dedicated_executor = user_proxy)
+groupchat = ExecutorGroupchat(agents=[user_proxy, comms_assistant, menu_assistant, order_assistant, expert_assistant], messages=[], max_round=10, dedicated_executor = user_proxy)
 manager = GroupChatManager(groupchat=groupchat)
 
 
